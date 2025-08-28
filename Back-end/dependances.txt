@@ -1,0 +1,8 @@
+back-end@1.0.0 C:\Users\jeanb\Documents\Openclassrooms\Projet\JB_P6_Développez-le-back-end-d'un-site-de-notation-de-livres_08_2025\Back-end
+├── bcrypt@6.0.0
+├── express@5.1.0
+├── json-web-token@3.2.0
+├── mongoose-unique-validator@4.0.1
+├── mongoose@8.17.1
+└── nodemon@3.1.10
+
