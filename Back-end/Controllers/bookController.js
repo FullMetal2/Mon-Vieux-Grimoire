@@ -1,5 +1,6 @@
 const Book = require("../Models/book");
 const fs = require("fs");
+const path = require("path");
 
 exports.creatBook = (req, res, next) => {
   const bookObject = JSON.parse(req.body.book);
@@ -58,7 +59,11 @@ exports.deleteBook = (req, res, next) => {
         res.status(401).json({ message: "Non autorisé !" });
       } else {
         const filename = book.imageUrl.split("/images/")[1];
-        fs.unlink(`/images/${filename}`, () => {
+        const filePath = path.join(__dirname, "..", "images", filename);
+        fs.unlink(filePath, (err) => {
+          if (err) {
+            console.error(err);
+          }
           Book.deleteOne({ _id: req.params.id })
             .then(() => {
               res.status(200).json({ message: "Objet supprimé !" });
@@ -113,14 +118,14 @@ exports.postRating = (req, res, next) => {
             .status(400)
             .json({ message: "La note doit être comprise entre 0 et 5" });
         }
-        console.log("AUTH=", req.auth); // doit contenir userId
-        console.log("BODY=", req.body); // doit contenir rating/grade
+        console.log("AUTH=", req.auth);
+        console.log("BODY=", req.body);
 
         book.ratings.push({ userId: req.auth.userId, grade: grade });
         console.log("req.auth:", req.auth);
         const moyenne = book.ratings.reduce((acc, r) => acc + r.grade, 0);
         book.averageRating = moyenne / book.ratings.length;
-        console.log("PUSHED=", book.ratings.at(-1)); // doit afficher { userId: '...', grade: N }
+        console.log("PUSHED=", book.ratings.at(-1));
 
         book
           .save()
