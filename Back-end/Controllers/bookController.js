@@ -98,14 +98,12 @@ exports.getbestBook = (req, res, next) => {
 };
 
 exports.postRating = (req, res, next) => {
-  console.log(req.auth);
   Book.findOne({ _id: req.params.id })
     .then((book) => {
       if (!book) return res.status(404).json({ message: "Livre non trouvé" });
       if (book.ratings.some((r) => r.userId === req.auth.userId)) {
         return res.status(400).json({ message: "Livre déjà noté !" });
       } else {
-        console.log("GRADE REçU:", req.body);
         const grade = Number(req.body.rating);
 
         if (!Number.isFinite(grade)) {
@@ -118,14 +116,11 @@ exports.postRating = (req, res, next) => {
             .status(400)
             .json({ message: "La note doit être comprise entre 0 et 5" });
         }
-        console.log("AUTH=", req.auth);
-        console.log("BODY=", req.body);
 
         book.ratings.push({ userId: req.auth.userId, grade: grade });
-        console.log("req.auth:", req.auth);
+
         const moyenne = book.ratings.reduce((acc, r) => acc + r.grade, 0);
         book.averageRating = moyenne / book.ratings.length;
-        console.log("PUSHED=", book.ratings.at(-1));
 
         book
           .save()
